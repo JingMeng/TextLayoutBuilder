@@ -20,10 +20,31 @@ import android.content.Context
 import android.graphics.Canvas
 import android.text.Layout
 import android.view.View
+import com.facebook.fbui.textlayoutbuilder.TextLayoutBuilder
 
-class SampleView(context: Context, private val layout: Layout) : View(context) {
-  override fun onDraw(canvas: Canvas) {
-    super.onDraw(canvas)
-    layout.draw(canvas)
-  }
+class SampleView(context: Context, private val builder: TextLayoutBuilder) : View(context) {
+
+    /**
+     * 在这边创建了两个layout，用切换切换
+     */
+    var layout: Layout? = null;
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        layout = builder.setWidth(measuredWidth, TextLayoutBuilder.MEASURE_MODE_AT_MOST).build();
+        // 这个里就拿到了数据
+        val lineCount = layout?.lineCount
+    }
+
+    /**
+     * 是使用这个，还是使用上面的那个
+     */
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+    }
+
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+        layout?.draw(canvas)
+    }
 }
