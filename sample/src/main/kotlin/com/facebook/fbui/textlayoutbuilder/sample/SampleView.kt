@@ -49,6 +49,11 @@ class SampleView(
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
         if (!mFirst) {
+            if (showMin && (layout?.lineCount ?: 0) > maxLine) {
+                setMeasuredDimension(measuredWidth, layoutMin?.height ?: 0)
+            } else {
+                setMeasuredDimension(measuredWidth, layout?.height ?: 0)
+            }
             return;
         }
         mFirst = false;
@@ -57,6 +62,7 @@ class SampleView(
         builder = builder.setWidth(measuredWidth, TextLayoutBuilder.MEASURE_MODE_AT_MOST)
         layout = builder.build();
 
+        setMeasuredDimension(measuredWidth, layout?.height ?: 0)
         // 这个里就拿到了数据
         val layout1 = layout
         //从这个 lineCount 的关系就可以推断出 不为 null---加上 ?:就不行了
@@ -93,6 +99,7 @@ class SampleView(
             //重新拼接文字
             layoutMin = builder.setText(stringCount.substring(0, start) + newEndLineText).build()
             showMin = true;
+            setMeasuredDimension(measuredWidth, layoutMin?.height ?: 0)
         }
     }
 

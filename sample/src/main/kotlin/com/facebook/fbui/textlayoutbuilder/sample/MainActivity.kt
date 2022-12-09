@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.facebook.fbui.textlayoutbuilder.TextLayoutBuilder
 
 class MainActivity : AppCompatActivity() {
@@ -54,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         val layout = block() ?: return
 
         val sampleView = SampleView(this, layout, 3).apply {
+            setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.colorAccent))
             // layoutParams = LinearLayout.LayoutParams(200f.dp(this@MainActivity), layout.height)
         }
         parent.addView(sampleView)
@@ -61,8 +63,10 @@ class MainActivity : AppCompatActivity() {
             sampleView.showMin = !sampleView.showMin;
             println("=====MainActivity==============setOnClickListener===========${sampleView.showMin}============")
             sampleView.requestLayout();
-            // FIXME:  必须加这个，不然不会导致重新绘制，知道哪里出问题吗？ 
-            sampleView.invalidate()
+            // FIXME:  必须加这个，不然不会导致重新绘制，知道哪里出问题吗？
+
+            //修复onMeasure 就好了
+//            sampleView.invalidate()
         }
     }
 
