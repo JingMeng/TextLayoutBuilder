@@ -52,10 +52,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun addSample(block: () -> TextLayoutBuilder) {
         val layout = block() ?: return
-        parent.addView(
-            SampleView(this, layout).apply {
-//                layoutParams = LinearLayout.LayoutParams(200f.dp(this@MainActivity), layout.height)
-            })
+
+        val sampleView = SampleView(this, layout, 3).apply {
+            // layoutParams = LinearLayout.LayoutParams(200f.dp(this@MainActivity), layout.height)
+        }
+        parent.addView(sampleView)
+        sampleView.setOnClickListener {
+            sampleView.showMin = !sampleView.showMin;
+            println("=====MainActivity==============setOnClickListener===========${sampleView.showMin}============")
+            sampleView.requestLayout();
+            // FIXME:  必须加这个，不然不会导致重新绘制，知道哪里出问题吗？ 
+            sampleView.invalidate()
+        }
     }
 
     private fun Float.dp(context: Context): Int {
