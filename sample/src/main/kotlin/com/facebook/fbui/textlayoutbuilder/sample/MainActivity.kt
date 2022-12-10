@@ -24,6 +24,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.facebook.fbui.textlayoutbuilder.TextLayoutBuilder
 
+const val text = "Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!"
+const val text1 = "Hello, world!"
 class MainActivity : AppCompatActivity() {
     private lateinit var parent: LinearLayout
 
@@ -38,9 +40,10 @@ class MainActivity : AppCompatActivity() {
          *
          * 那我们自己的也可以，只不过需要了解一下系统的兼容性
          */
+
         addSample {
             val builder =
-                TextLayoutBuilder().setText("Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!")
+                TextLayoutBuilder().setText(text1)
                     .setTextSize(20f.dp(this))
 
             if (false) {

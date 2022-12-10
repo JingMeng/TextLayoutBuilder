@@ -25,12 +25,62 @@ import com.facebook.fbui.textlayoutbuilder.TextLayoutBuilder
 
 /**
  * https://github.com/JingMeng/better/blob/c89628495cd0b15a96e082209f850ebded3d9d6a/app/src/main/java/me/fenfei/ui/view/text/view/bug/ExpandTextView2.java
- */
+ *
+ *
+ * 之前不希望 onMeasure 来创建 staticLayout
+ *
+ * 我们可以借鉴TextView的方案
+ *
+ * [android.widget.TextView]
+ * [android.widget.TextView.onMeasure]
+ *
+ * https://juejin.cn/post/6934593494182952974
+ *
+ * https://jaeger.itscoder.com/android/2016/08/05/staticlayout-source-analyse.html
+ *  其直接子类有 StaticLayout、DynamicLayout、BoringLayout，
+ *
+ *  在官方的文档中提到，如果文本内容会被编辑，应该使用 DynamicLayout，
+ *  如果文本显示之后不会发生改变，应该使用 StaticLayout，
+ *  而 BoringLayout 则使用场景极为有限：当你确保你的文本只有一行，且所有的字符均是从左到右显示的（某些语言的文字是从右到左显示的），你才可以使用 BoringLayout。
+ *
+ *
+ *  // 在 onMeasure 以及很多地方都调用这个方法，人家判null了 ，也就是进行了复用
+ *   if (mLayout == null) {
+ *       makeNewLayout(want, hintWant, boring, hintBoring,
+ *       width - getCompoundPaddingLeft() - getCompoundPaddingRight(), false);
+ *   }
+ *
+ *   其次那个宽度也限制了
+ *   1. 如果固定，你写多少是多少
+ *   2. 如果atmost的话， 那就计算宽度，计算算了在和给予的进行比较
+ *
+ *
+ *  如果没有北京因素影响的话，当前屏幕宽度就是最好的了
+ *
+ *  getDesiredWidthWithLimit 这个是一个静态的方法 所有的子类相关调用都是公用的，但是我们并没有使用
+ *
+ *   但是官方给与了 TextLayoutBuilder.MEASURE_MODE_AT_MOST 应对情形，也不需要我们考虑了，给一个最大的就结束了
+ *   builder.setWidth(measuredWidth, TextLayoutBuilder.MEASURE_MODE_AT_MOST)
+ *
+ *  这个方法也是调用的 getDesiredWidthWithLimit
+ *
+ *  https://www.jianshu.com/p/52791b3de34a
+ *
+ *  =============
+ *
+ *  想问个问题，为什么BoringLayou测绘出来的Text的大小，和Paint.getTextBound()出来的不一样，我测试了一下，如果一个TextView的大小是wrap，我给30像素的文字，结果TextView的高度竟然是35
+ *
+ * fixme
+ *  测量还是有差距的，现在测量应该换一下测量方式，不应该使用pant
+ *  https://juejin.cn/post/6930503954971394062
+ *
+ **/
 class SampleView(
     context: Context,
     private var builder: TextLayoutBuilder,
     val maxLine: Int = 3
 ) : View(context) {
+
 
     var showMin: Boolean = false;
     var mFirst: Boolean = true;
@@ -42,6 +92,7 @@ class SampleView(
 
     /**
      * 在这边创建了两个layout，用切换切换
+     *
      */
     var layout: Layout? = null;
     var layoutMin: Layout? = null;
@@ -50,9 +101,9 @@ class SampleView(
 
         if (!mFirst) {
             if (showMin && (layout?.lineCount ?: 0) > maxLine) {
-                setMeasuredDimension(measuredWidth, layoutMin?.height ?: 0)
+                setMeasuredDimension(layoutMin?.width ?: 0, layoutMin?.height ?: 0)
             } else {
-                setMeasuredDimension(measuredWidth, layout?.height ?: 0)
+                setMeasuredDimension(layout?.width ?: 0, layout?.height ?: 0)
             }
             return;
         }
@@ -62,7 +113,10 @@ class SampleView(
         builder = builder.setWidth(measuredWidth, TextLayoutBuilder.MEASURE_MODE_AT_MOST)
         layout = builder.build();
 
-        setMeasuredDimension(measuredWidth, layout?.height ?: 0)
+        /**
+         * 修改宽度的问题，是为了自适应的时候使用
+         */
+        setMeasuredDimension(layout?.width ?: 0, layout?.height ?: 0)
         // 这个里就拿到了数据
         val layout1 = layout
         //从这个 lineCount 的关系就可以推断出 不为 null---加上 ?:就不行了
@@ -99,7 +153,7 @@ class SampleView(
             //重新拼接文字
             layoutMin = builder.setText(stringCount.substring(0, start) + newEndLineText).build()
             showMin = true;
-            setMeasuredDimension(measuredWidth, layoutMin?.height ?: 0)
+            setMeasuredDimension(layoutMin?.width ?: 0, layoutMin?.height ?: 0)
         }
     }
 
