@@ -196,6 +196,9 @@ class SampleView(
      *    performDraw()
      *
      * 可以是记忆便宜，measure 会导致layout是否是强制执行
+     *
+     * https://juejin.cn/post/6856291250081906696
+     * 由于在 measure 过程中设置了PFLAG_LAYOUT_REQUIRED标记，那么就会调用onLayout来进行view的布局过程，这个过程完成后，清理PFLAG_LAYOUT_REQUIRED和PFLAG_FORCE_LAYOUT标记表示布局过程完成了。这里需要注意的是view在测量后大小可能发生变化，这时候通过setFrame设置其边框时会调用invalidate的调用，因此可能会导致onDraw的调用。
      */
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
