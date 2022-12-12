@@ -24,8 +24,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.facebook.fbui.textlayoutbuilder.TextLayoutBuilder
 
-const val text = "Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!"
+const val text =
+    "Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!"
 const val text1 = "Hello, world!"
+
 class MainActivity : AppCompatActivity() {
     private lateinit var parent: LinearLayout
 
@@ -43,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         addSample {
             val builder =
-                TextLayoutBuilder().setText(text1)
+                TextLayoutBuilder().setText(text)
                     .setTextSize(20f.dp(this))
 
             if (false) {
@@ -65,11 +67,13 @@ class MainActivity : AppCompatActivity() {
         sampleView.setOnClickListener {
             sampleView.showMin = !sampleView.showMin;
             println("=====MainActivity==============setOnClickListener===========${sampleView.showMin}============")
-            sampleView.requestLayout();
+            sampleView.requestLayout()
             // FIXME:  必须加这个，不然不会导致重新绘制，知道哪里出问题吗？
 
             //修复onMeasure 就好了
-//            sampleView.invalidate()
+            if (false) {
+                sampleView.invalidate()
+            }
         }
     }
 

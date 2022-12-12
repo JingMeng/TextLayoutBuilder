@@ -86,6 +86,8 @@ class SampleView(
     var mFirst: Boolean = true;
     var originText: String = "";
 
+    var size = 0
+
     init {
         originText = builder.text as String;
     }
@@ -165,8 +167,39 @@ class SampleView(
     }
 
 
+    /**
+     *  [android.view.ViewGroup]
+     *  ViewGroup 也没有重写这个方法
+     *  [android.view.ViewGroup.onDraw]
+     *  这个方法也没有重写
+     *  [android.view.ViewGroup.draw]
+     *
+     *   final boolean dirtyOpaque = (privateFlags & PFLAG_DIRTY_MASK) == PFLAG_DIRTY_OPAQUE && (mAttachInfo == null || !mAttachInfo.mIgnoreDirtyState);
+     *
+     *   是这个标志位，但是我记忆中有一个标志位的清除操作
+     *
+     *  这个竟然也没有重写
+     *  [android.view.ViewGroup.onMeasure]
+     *  [android.view.ViewGroup.measure]
+     *
+     *  还是回到了最原始的那个问题
+     *
+     *  requestLayout 会导致 onDraw 执行吗
+     *
+     * [android.view.ViewRootImpl]
+     *   performTraversals();
+     *   performMeasure
+     *    这个的调用条件是什么，好几次都分析到了
+     *    performDraw()
+     *
+     * 可以是记忆便宜，measure 会导致layout是否是强制执行
+     */
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        size++
+        if (false && size > 2) {
+            throw  RuntimeException("=======查看一下调用源头==============");
+        }
         val count = layout?.lineCount ?: 0
         println("============$showMin=====${count > maxLine}=====")
         if (showMin && count > maxLine) {
