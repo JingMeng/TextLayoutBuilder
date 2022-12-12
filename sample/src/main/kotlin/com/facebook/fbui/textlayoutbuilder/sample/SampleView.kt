@@ -74,6 +74,9 @@ import com.facebook.fbui.textlayoutbuilder.TextLayoutBuilder
  *  测量还是有差距的，现在测量应该换一下测量方式，不应该使用pant
  *  https://juejin.cn/post/6930503954971394062
  *
+ *
+ *  还有是自定义ViewGroup的时候还需要重写一个方法，这个方法目前你也忘记了
+ *
  **/
 class SampleView(
     context: Context,
