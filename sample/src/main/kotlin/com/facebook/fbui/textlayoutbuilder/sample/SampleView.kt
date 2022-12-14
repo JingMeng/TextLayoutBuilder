@@ -87,12 +87,12 @@ class SampleView(
 
     var showMin: Boolean = false;
     var mFirst: Boolean = true;
-    var originText: String = "";
+    var originText: CharSequence = "";
 
     var size = 0
 
     init {
-        originText = builder.text as String;
+        originText = builder.text as CharSequence;
     }
 
     /**

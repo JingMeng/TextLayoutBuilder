@@ -18,18 +18,30 @@ package com.facebook.fbui.textlayoutbuilder.sample
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Layout
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ImageSpan
 import android.util.TypedValue
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.facebook.fbui.textlayoutbuilder.TextLayoutBuilder
 
+
 const val text =
     "Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!"
-const val text1 = "Hello, world!"
+const val text1 = "Hello, world!Hello, world!Hello, world!Hello, world!"
 
+/**
+ * 关于空格的解释
+ * https://www.jianshu.com/p/bed2607b8c76
+ * https://blog.csdn.net/qq_33210042/article/details/105573427
+ * https://blog.csdn.net/qq_33210042/article/details/105573427
+ */
 class MainActivity : AppCompatActivity() {
     private lateinit var parent: LinearLayout
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,16 +49,29 @@ class MainActivity : AppCompatActivity() {
         parent = findViewById(R.id.parent)
 
         /**
-         * 这个一块的宽度还是需要获取的
-         * 先获取一下父的宽度，根据宽度和参数进行计算
          *
-         * 那我们自己的也可以，只不过需要了解一下系统的兼容性
+         *  下面这部分是
          */
+        val space = "\u0020"
+        val tag = "\u3000"
+        val spannableString = SpannableString(text1 + space + tag)
+        resources.getDrawable(R.drawable.j_wallet_charge_address_copy)?.let {
+            it.setBounds(0, 0, it.intrinsicWidth, it.intrinsicHeight)
+            //这个地方的对齐模式存在两种
+            val imageSpan = ImageSpan(it, ImageSpan.ALIGN_BASELINE)
+            spannableString.setSpan(
+                imageSpan,
+                spannableString.length - tag.length,
+                spannableString.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
 
         addSample {
             val builder =
-                TextLayoutBuilder().setText(text)
+                TextLayoutBuilder().setText(spannableString)
                     .setTextSize(20f.dp(this))
+                    .setAlignment(Layout.Alignment.ALIGN_CENTER)
 
             if (false) {
                 //为什么不动态调整这个参数
@@ -72,6 +97,12 @@ class MainActivity : AppCompatActivity() {
 
             //修复onMeasure 就好了
             if (false) {
+                /**
+                 *  这个地方的操作和
+                 *  [android.view.View.layout] 里面的触发是一致的
+                 *  [android.view.View.setFrame] 里面的触发是一致的
+                 *   这样也就证明了为什么  更新了 onMeasure 就可以起到作用，和之前的结论一起对别
+                 */
                 sampleView.invalidate()
             }
         }
