@@ -24,6 +24,7 @@ import android.text.SpannableString
 import android.text.style.ImageSpan
 import android.util.TypedValue
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.facebook.fbui.textlayoutbuilder.TextLayoutBuilder
@@ -31,7 +32,7 @@ import com.facebook.fbui.textlayoutbuilder.TextLayoutBuilder
 
 const val text =
     "Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!Hello, world!"
-const val text1 = "Hello, world!Hello, world!Hello, world!Hello, world!"
+const val text1 = "Hello, world!  Hello, world!  Hello, world!  Hello, world!"
 
 /**
  * 关于空格的解释
@@ -41,20 +42,30 @@ const val text1 = "Hello, world!Hello, world!Hello, world!Hello, world!"
  */
 class MainActivity : AppCompatActivity() {
     private lateinit var parent: LinearLayout
+    private lateinit var systemTextview: TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         parent = findViewById(R.id.parent)
+        systemTextview = findViewById(R.id.system_textview)
+        var messageText = "1BPAEdM47weLkWhbFQ4ZWcFMK Xzmip2YHi"
+        //去掉了一个空格，效果就是不一样
+        //去掉了一个空格，效果就是不一样
+        messageText = "1BPAEdM47weLkWhbFQ4ZWcFMKXzmip2YHi"
 
         /**
          *
          *  下面这部分是
+         *
+         *  todo： 上面的 text1 是区分不出来的 但是 messageText 能够区分出来，系统的和自定义的有什么不同
+         *
+         *  备注： 也就是说用text1得到的效果是一致的，但是用 messageText得到的效果不是一致的
          */
         val space = "\u0020"
         val tag = "\u3000"
-        val spannableString = SpannableString(text1 + space + tag)
+        val spannableString = SpannableString(messageText + space + tag)
         resources.getDrawable(R.drawable.j_wallet_charge_address_copy)?.let {
             it.setBounds(0, 0, it.intrinsicWidth, it.intrinsicHeight)
             //这个地方的对齐模式存在两种
@@ -66,6 +77,9 @@ class MainActivity : AppCompatActivity() {
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
+        //系统对比控件，文本大小 20dp
+        systemTextview.setText(spannableString)
+
 
         addSample {
             val builder =
