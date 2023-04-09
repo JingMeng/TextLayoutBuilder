@@ -93,10 +93,23 @@ class MainActivity : AppCompatActivity() {
             }
             builder
         }
+        if (false) {
+            addSample2 {
+                TextLayoutBuilder().setText("Hello, world!").setTextSize(20f.dp(this)).build()
+            }
+        }
+    }
+
+    private fun addSample2(block: () -> Layout?) {
+        val layout = block() ?: return
+        parent.addView(
+            SampleView2(this, layout).apply {
+                layoutParams = LinearLayout.LayoutParams(layout.width, layout.height)
+            })
     }
 
     private fun addSample(block: () -> TextLayoutBuilder) {
-        val layout = block() ?: return
+        val layout = block()
 
         val sampleView = SampleView(this, layout, 3).apply {
             setBackgroundColor(ContextCompat.getColor(this@MainActivity, R.color.colorAccent))
